@@ -1,0 +1,130 @@
+{% extends "layout.html" %}
+
+{% block title %}Upload Resume - AI Resume Analyzer{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Header -->
+            <div class="text-center mb-4">
+                <i class="fas fa-upload display-4 text-primary mb-3"></i>
+                <h1 class="h2 fw-bold">Upload Your Resume</h1>
+                <p class="text-muted">
+                    Upload your resume in PDF or DOCX format to get started with AI-powered analysis.
+                </p>
+            </div>
+
+            <!-- Upload Form -->
+            <div class="card bg-dark border">
+                <div class="card-body p-4">
+                    <form method="POST" enctype="multipart/form-data" id="uploadForm">
+                        <div class="mb-4">
+                            <label for="resume" class="form-label fw-bold">
+                                <i class="fas fa-file-alt me-2"></i>Select Resume File
+                            </label>
+                            <input type="file" 
+                                   class="form-control form-control-lg" 
+                                   id="resume" 
+                                   name="resume" 
+                                   accept=".pdf,.docx,.doc"
+                                   required>
+                            <div class="form-text">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Supported formats: PDF, DOCX. Maximum file size: 16MB.
+                            </div>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg" id="uploadBtn">
+                                <i class="fas fa-cloud-upload-alt me-2"></i>
+                                <span id="uploadText">Upload Resume</span>
+                                <div class="spinner-border spinner-border-sm ms-2 d-none" id="uploadSpinner"></div>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- File Preview -->
+            <div id="filePreview" class="card bg-dark border mt-4 d-none">
+                <div class="card-body">
+                    <h6 class="card-title">
+                        <i class="fas fa-eye me-2"></i>File Preview
+                    </h6>
+                    <div id="fileInfo" class="d-flex align-items-center">
+                        <i class="fas fa-file-alt text-muted me-3" style="font-size: 2rem;"></i>
+                        <div>
+                            <div id="fileName" class="fw-bold"></div>
+                            <div id="fileSize" class="text-muted small"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tips -->
+            <div class="card bg-dark border mt-4">
+                <div class="card-body">
+                    <h6 class="card-title">
+                        <i class="fas fa-lightbulb text-warning me-2"></i>Tips for Best Results
+                    </h6>
+                    <ul class="mb-0 ps-3">
+                        <li class="mb-2">Ensure your resume is well-formatted and readable</li>
+                        <li class="mb-2">Include clear section headings (Experience, Education, Skills, etc.)</li>
+                        <li class="mb-2">Use standard fonts and avoid complex formatting</li>
+                        <li class="mb-2">Save as PDF to preserve formatting</li>
+                        <li>Make sure all text is selectable (not an image)</li>
+                    </ul>
+                </div>
+            </div>
+
+            {% if session.resume_id %}
+            <!-- Existing Resume Notice -->
+            <div class="alert alert-warning border-0 mt-4">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-exclamation-triangle me-3"></i>
+                    <div>
+                        <h6 class="alert-heading mb-1">Existing Resume Detected</h6>
+                        <p class="mb-0">
+                            You already have a resume uploaded. Uploading a new one will replace the current resume.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const uploadForm = document.getElementById('uploadForm');
+    const fileInput = document.getElementById('resume');
+    const uploadBtn = document.getElementById('uploadBtn');
+    const uploadText = document.getElementById('uploadText');
+    const uploadSpinner = document.getElementById('uploadSpinner');
+    const filePreview = document.getElementById('filePreview');
+    const fileName = document.getElementById('fileName');
+    const fileSize = document.getElementById('fileSize');
+
+    fileInput.addEventListener('change', function() {
+        const file = this.files[0];
+        if (file) {
+            fileName.textContent = file.name;
+            fileSize.textContent = `${(file.size / 1024 / 1024).toFixed(2)} MB`;
+            filePreview.classList.remove('d-none');
+        } else {
+            filePreview.classList.add('d-none');
+        }
+    });
+
+    uploadForm.addEventListener('submit', function() {
+        uploadBtn.disabled = true;
+        uploadText.textContent = 'Uploading...';
+        uploadSpinner.classList.remove('d-none');
+    });
+});
+</script>
+{% endblock %}

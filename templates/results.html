@@ -1,0 +1,283 @@
+{% extends "layout.html" %}
+
+{% block title %}Resume Analysis - AI Resume Analyzer{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Header -->
+    <div class="row justify-content-center mb-4">
+        <div class="col-lg-10">
+            <div class="text-center">
+                <i class="fas fa-chart-bar display-4 text-success mb-3"></i>
+                <h1 class="h2 fw-bold">Resume Analysis</h1>
+                <p class="text-muted">AI-powered insights and recommendations for your resume</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Resume Info -->
+    <div class="row justify-content-center mb-4">
+        <div class="col-lg-10">
+            <div class="card bg-dark border">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-file-alt text-muted me-3" style="font-size: 2rem;"></i>
+                        <div>
+                            <h6 class="mb-1">{{ resume.original_filename }}</h6>
+                            <small class="text-muted">
+                                Uploaded on {{ resume.upload_date.strftime('%B %d, %Y at %I:%M %p') }}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if not analysis %}
+    <!-- Analysis Form -->
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card bg-dark border">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-robot me-2"></i>Start Analysis
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" id="analysisForm">
+                        <div class="mb-4">
+                            <label for="job_description" class="form-label fw-bold">
+                                <i class="fas fa-briefcase me-2"></i>Job Description (Optional)
+                            </label>
+                            <textarea class="form-control" 
+                                      id="job_description" 
+                                      name="job_description" 
+                                      rows="8" 
+                                      placeholder="Paste a job description here to analyze how well your resume matches the requirements. Leave blank for general resume analysis."></textarea>
+                            <div class="form-text">
+                                <i class="fas fa-info-circle me-1"></i>
+                                For better results, include the complete job posting with requirements and qualifications.
+                            </div>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg" id="analyzeBtn">
+                                <i class="fas fa-brain me-2"></i>
+                                <span id="analyzeText">Analyze Resume</span>
+                                <div class="spinner-border spinner-border-sm ms-2 d-none" id="analyzeSpinner"></div>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <!-- Analysis Results -->
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            {% if analysis_data %}
+            <!-- Score Cards -->
+            <div class="row g-3 mb-4">
+                <div class="col-md-3">
+                    <div class="card bg-dark border text-center">
+                        <div class="card-body">
+                            <i class="fas fa-star text-warning mb-2" style="font-size: 2rem;"></i>
+                            <h3 class="fw-bold mb-1">{{ analysis_data.overall_score }}%</h3>
+                            <p class="text-muted mb-0">Overall Score</p>
+                        </div>
+                    </div>
+                </div>
+                
+                {% if analysis_data.skills_match_score %}
+                <div class="col-md-3">
+                    <div class="card bg-dark border text-center">
+                        <div class="card-body">
+                            <i class="fas fa-cogs text-info mb-2" style="font-size: 2rem;"></i>
+                            <h3 class="fw-bold mb-1">{{ analysis_data.skills_match_score }}%</h3>
+                            <p class="text-muted mb-0">Skills Match</p>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                
+                {% if analysis_data.experience_match_score %}
+                <div class="col-md-3">
+                    <div class="card bg-dark border text-center">
+                        <div class="card-body">
+                            <i class="fas fa-briefcase text-success mb-2" style="font-size: 2rem;"></i>
+                            <h3 class="fw-bold mb-1">{{ analysis_data.experience_match_score }}%</h3>
+                            <p class="text-muted mb-0">Experience</p>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                
+                {% if analysis_data.ats_compatibility %}
+                <div class="col-md-3">
+                    <div class="card bg-dark border text-center">
+                        <div class="card-body">
+                            <i class="fas fa-robot text-primary mb-2" style="font-size: 2rem;"></i>
+                            <h3 class="fw-bold mb-1">{{ analysis_data.ats_compatibility }}%</h3>
+                            <p class="text-muted mb-0">ATS Friendly</p>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Analysis Summary -->
+            {% if analysis_data.summary %}
+            <div class="card bg-dark border mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-clipboard-list me-2"></i>Analysis Summary
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="mb-0">{{ analysis_data.summary }}</p>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Strengths and Weaknesses -->
+            <div class="row g-4 mb-4">
+                {% if analysis_data.strengths %}
+                <div class="col-md-6">
+                    <div class="card bg-dark border h-100">
+                        <div class="card-header">
+                            <h6 class="mb-0">
+                                <i class="fas fa-check-circle text-success me-2"></i>Strengths
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-unstyled mb-0">
+                                {% for strength in analysis_data.strengths %}
+                                <li class="mb-2">
+                                    <i class="fas fa-plus text-success me-2"></i>{{ strength }}
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if analysis_data.weaknesses %}
+                <div class="col-md-6">
+                    <div class="card bg-dark border h-100">
+                        <div class="card-header">
+                            <h6 class="mb-0">
+                                <i class="fas fa-exclamation-triangle text-warning me-2"></i>Areas for Improvement
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-unstyled mb-0">
+                                {% for weakness in analysis_data.weaknesses %}
+                                <li class="mb-2">
+                                    <i class="fas fa-minus text-warning me-2"></i>{{ weakness }}
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Recommendations -->
+            {% if analysis_data.recommendations %}
+            <div class="card bg-dark border mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-lightbulb text-warning me-2"></i>Recommendations
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <ol class="mb-0">
+                        {% for recommendation in analysis_data.recommendations %}
+                        <li class="mb-2">{{ recommendation }}</li>
+                        {% endfor %}
+                    </ol>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Keywords Analysis -->
+            {% if analysis_data.keywords_found or analysis_data.keywords_missing %}
+            <div class="row g-4 mb-4">
+                {% if analysis_data.keywords_found %}
+                <div class="col-md-6">
+                    <div class="card bg-dark border">
+                        <div class="card-header">
+                            <h6 class="mb-0">
+                                <i class="fas fa-tags text-success me-2"></i>Keywords Found
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            {% for keyword in analysis_data.keywords_found %}
+                            <span class="badge bg-success me-2 mb-2">{{ keyword }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if analysis_data.keywords_missing %}
+                <div class="col-md-6">
+                    <div class="card bg-dark border">
+                        <div class="card-header">
+                            <h6 class="mb-0">
+                                <i class="fas fa-tags text-danger me-2"></i>Missing Keywords
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            {% for keyword in analysis_data.keywords_missing %}
+                            <span class="badge bg-danger me-2 mb-2">{{ keyword }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+            {% endif %}
+
+            <!-- Action Buttons -->
+            <div class="d-flex gap-3 justify-content-center">
+                <a href="{{ url_for('match_jobs') }}" class="btn btn-success">
+                    <i class="fas fa-search me-2"></i>Find Matching Jobs
+                </a>
+                <a href="{{ url_for('analyze_resume') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-redo me-2"></i>Analyze Again
+                </a>
+                <a href="{{ url_for('upload_page') }}" class="btn btn-outline-primary">
+                    <i class="fas fa-upload me-2"></i>Upload New Resume
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const analysisForm = document.getElementById('analysisForm');
+    
+    if (analysisForm) {
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const analyzeText = document.getElementById('analyzeText');
+        const analyzeSpinner = document.getElementById('analyzeSpinner');
+
+        analysisForm.addEventListener('submit', function() {
+            analyzeBtn.disabled = true;
+            analyzeText.textContent = 'Analyzing...';
+            analyzeSpinner.classList.remove('d-none');
+        });
+    }
+});
+</script>
+{% endblock %}
