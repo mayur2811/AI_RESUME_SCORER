@@ -12,46 +12,55 @@
                 <div class="card-body">
                     <div class="row align-items-center">
                         <div class="col-md-8">
-                            <div class="d-flex align-items-center mb-3">
-                                <div class="level-avatar me-3">
-                                    <div class="level-circle">{{ user_stats.level }}</div>
-                                </div>
-                                <div>
-                                    <h4 class="mb-1 text-gradient">{{ user_stats.level_title }}</h4>
-                                    <p class="text-muted mb-0">Level {{ user_stats.level }} • {{ user_stats.total_xp }} XP</p>
-                                </div>
-                            </div>
-                            
-                            <!-- XP Progress Bar -->
-                            <div class="progress-container mb-3">
-                                <div class="d-flex justify-content-between mb-1">
-                                    <small class="text-muted">Progress to Level {{ user_stats.level + 1 }}</small>
-                                    <small class="text-muted">{{ user_stats.xp_progress }}/{{ user_stats.xp_for_level }} XP</small>
-                                </div>
-                                <div class="progress magical-progress">
-                                    <div class="progress-bar bg-gradient-primary" role="progressbar" 
-                                         style="width: {{ user_stats.progress_percentage }}%" 
-                                         data-target="{{ user_stats.progress_percentage }}">
+                            <div class="welcome-section mb-3">
+                                <h3 class="mb-1">🎯 Welcome Back!</h3>
+                                <p class="text-muted mb-3">Your career is Level {{ user_stats.level }}</p>
+                                
+                                <div class="level-progress-container">
+                                    <div class="level-indicator">
+                                        <span class="level-number">{{ user_stats.level }}</span>
                                     </div>
+                                    <div class="progress-track">
+                                        <div class="progress magical-progress">
+                                            <div class="progress-bar" 
+                                                 style="width: {{ user_stats.progress_percentage }}%" 
+                                                 data-target="{{ user_stats.progress_percentage }}">
+                                            </div>
+                                        </div>
+                                        <div class="progress-labels">
+                                            <span>{{ user_stats.level }}</span>
+                                            <span>{{ user_stats.level + 1 }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="xp-info mt-2">
+                                    <small class="text-muted">{{ user_stats.xp_progress }}/{{ user_stats.xp_for_level }} XP to next level</small>
                                 </div>
                             </div>
                         </div>
                         
                         <div class="col-md-4">
-                            <div class="row text-center">
-                                <div class="col-6">
-                                    <div class="stat-item">
-                                        <i class="fas fa-fire text-warning mb-1"></i>
-                                        <div class="stat-number">{{ user_stats.current_streak }}</div>
-                                        <div class="stat-label">Day Streak</div>
-                                    </div>
+                            <div class="stats-grid">
+                                <div class="stat-card">
+                                    <div class="stat-icon">🔥</div>
+                                    <div class="stat-value">{{ user_stats.current_streak }}</div>
+                                    <div class="stat-label">Day Streak</div>
                                 </div>
-                                <div class="col-6">
-                                    <div class="stat-item">
-                                        <i class="fas fa-trophy text-warning mb-1"></i>
-                                        <div class="stat-number">{{ user_stats.badges_count }}</div>
-                                        <div class="stat-label">Badges</div>
-                                    </div>
+                                <div class="stat-card">
+                                    <div class="stat-icon">📊</div>
+                                    <div class="stat-value">{{ user_stats.resumes_count }}</div>
+                                    <div class="stat-label">Resumes</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-icon">🏆</div>
+                                    <div class="stat-value">{{ user_stats.badges_count }}</div>
+                                    <div class="stat-label">Badges</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-icon">💼</div>
+                                    <div class="stat-value">12</div>
+                                    <div class="stat-label">Job Matches</div>
                                 </div>
                             </div>
                         </div>
@@ -70,6 +79,49 @@
                         </div>
                     </div>
                     {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Today's Missions -->
+    <div class="row justify-content-center mb-4">
+        <div class="col-lg-10">
+            <div class="card bg-dark border missions-card">
+                <div class="card-body">
+                    <h5 class="mb-3">
+                        <i class="fas fa-bullseye text-warning me-2"></i>
+                        Today's Missions
+                    </h5>
+                    <div class="missions-list">
+                        <div class="mission-item completed">
+                            <div class="mission-checkbox">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div class="mission-content">
+                                <div class="mission-title">Check daily job matches</div>
+                                <div class="mission-reward">+50 XP</div>
+                            </div>
+                        </div>
+                        <div class="mission-item">
+                            <div class="mission-checkbox">
+                                <div class="mission-circle"></div>
+                            </div>
+                            <div class="mission-content">
+                                <div class="mission-title">Upload and analyze a resume</div>
+                                <div class="mission-reward">+75 XP</div>
+                            </div>
+                        </div>
+                        <div class="mission-item">
+                            <div class="mission-checkbox">
+                                <div class="mission-circle"></div>
+                            </div>
+                            <div class="mission-content">
+                                <div class="mission-title">Achieve 80+ resume score</div>
+                                <div class="mission-reward">+100 XP</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

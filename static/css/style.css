@@ -1,15 +1,39 @@
 /* Creative AI Resume Analyzer - Enhanced UI/UX */
 
 :root {
-    --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    --gradient-success: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-    --gradient-info: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-    --gradient-warning: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-    --gradient-hero: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    /* Primary Color System */
+    --primary-blue: #4F46E5;
+    --primary-blue-light: #A5B4FC;
+    --primary-blue-dark: #3730A3;
+    
+    /* Success & Achievement Colors */
+    --success-green: #10B981;
+    --achievement-gold: #F59E0B;
+    --level-up-purple: #8B5CF6;
+    
+    /* Feedback & Status Colors */
+    --warning-orange: #F97316;
+    --danger-red: #EF4444;
+    --info-cyan: #06B6D4;
+    
+    /* Neutral Colors (for light theme) */
+    --background-light: #F8FAFC;
+    --card-background-light: #FFFFFF;
+    --border-light: #E2E8F0;
+    --text-primary-light: #1E293B;
+    --text-secondary-light: #64748B;
+    --text-muted-light: #94A3B8;
+    
+    /* Gradients using new color system */
+    --gradient-primary: linear-gradient(135deg, var(--primary-blue) 0%, var(--level-up-purple) 100%);
+    --gradient-success: linear-gradient(135deg, var(--success-green) 0%, var(--achievement-gold) 100%);
+    --gradient-info: linear-gradient(135deg, var(--info-cyan) 0%, var(--primary-blue-light) 100%);
+    --gradient-warning: linear-gradient(135deg, var(--warning-orange) 0%, var(--danger-red) 100%);
+    --gradient-hero: linear-gradient(135deg, var(--primary-blue) 0%, var(--level-up-purple) 50%, var(--achievement-gold) 100%);
     --gradient-card: linear-gradient(145deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%);
-    --shadow-glow: 0 0 30px rgba(102, 126, 234, 0.3);
+    --shadow-glow: 0 0 30px rgba(79, 70, 229, 0.3);
     --shadow-hover: 0 20px 40px rgba(0,0,0,0.4);
-    --border-gradient: linear-gradient(45deg, #667eea, #764ba2, #f093fb);
+    --border-gradient: linear-gradient(45deg, var(--primary-blue), var(--level-up-purple), var(--achievement-gold));
 }
 
 /* Enhanced transitions and animations */
@@ -737,18 +761,64 @@ footer {
     }
 }
 
-/* Gamification Dashboard Styles */
+/* Enhanced Gamification Dashboard Styles */
 .gamification-dashboard {
-    background: linear-gradient(135deg, rgba(108, 99, 255, 0.1) 0%, rgba(255, 95, 109, 0.1) 100%);
-    border: 1px solid rgba(108, 99, 255, 0.2) !important;
-    box-shadow: 0 8px 32px rgba(108, 99, 255, 0.1);
+    background: linear-gradient(135deg, rgba(79, 70, 229, 0.08) 0%, rgba(139, 92, 246, 0.08) 100%);
+    border: 1px solid rgba(79, 70, 229, 0.2) !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     backdrop-filter: blur(10px);
     transition: all 0.3s ease;
+    border-radius: 12px;
 }
 
 .gamification-dashboard:hover {
     transform: translateY(-2px);
-    box-shadow: 0 12px 48px rgba(108, 99, 255, 0.2);
+    box-shadow: 0 10px 25px rgba(79, 70, 229, 0.15);
+}
+
+/* Welcome Section */
+.welcome-section h3 {
+    color: var(--primary-blue);
+    font-weight: 600;
+}
+
+/* Level Progress Container */
+.level-progress-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 1rem 0;
+}
+
+.level-indicator {
+    flex-shrink: 0;
+}
+
+.level-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: var(--gradient-primary);
+    border-radius: 50%;
+    color: white;
+    font-weight: bold;
+    font-size: 1.1rem;
+    box-shadow: 0 4px 16px rgba(79, 70, 229, 0.3);
+}
+
+.progress-track {
+    flex: 1;
+    position: relative;
+}
+
+.progress-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.25rem;
+    font-size: 0.75rem;
+    color: var(--text-muted);
 }
 
 /* Level Avatar */
@@ -810,32 +880,125 @@ footer {
     100% { left: 100%; }
 }
 
-/* Stats Items */
-.stat-item {
+/* Enhanced Stats Grid */
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+}
+
+.stat-card {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 1rem;
     text-align: center;
-    padding: 0.5rem;
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.05);
     transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.stat-item:hover {
-    background: rgba(255, 255, 255, 0.1);
+.stat-card:hover {
+    background: rgba(255, 255, 255, 0.12);
     transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(79, 70, 229, 0.2);
 }
 
-.stat-number {
+.stat-icon {
     font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.stat-value {
+    font-size: 1.8rem;
     font-weight: bold;
-    color: #6c63ff;
-    text-shadow: 0 2px 4px rgba(108, 99, 255, 0.3);
+    color: var(--primary-blue);
+    text-shadow: 0 2px 4px rgba(79, 70, 229, 0.3);
+    line-height: 1;
 }
 
 .stat-label {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     color: #a1a1aa;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    margin-top: 0.25rem;
+}
+
+/* Today's Missions Card */
+.missions-card {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, rgba(245, 158, 11, 0.08) 100%);
+    border: 1px solid rgba(139, 92, 246, 0.2) !important;
+    border-radius: 12px;
+}
+
+.missions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.mission-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.mission-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateX(4px);
+}
+
+.mission-item.completed {
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.mission-checkbox {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.mission-item.completed .mission-checkbox {
+    background: var(--success-green);
+    color: white;
+}
+
+.mission-circle {
+    width: 16px;
+    height: 16px;
+    border: 2px solid #64748B;
+    border-radius: 50%;
+}
+
+.mission-content {
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.mission-title {
+    font-weight: 500;
+    color: #ffffff;
+}
+
+.mission-item.completed .mission-title {
+    opacity: 0.7;
+    text-decoration: line-through;
+}
+
+.mission-reward {
+    font-size: 0.875rem;
+    color: var(--achievement-gold);
+    font-weight: 600;
 }
 
 /* Badge Items */
