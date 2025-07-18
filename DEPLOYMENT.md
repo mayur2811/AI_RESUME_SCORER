@@ -58,12 +58,22 @@ In your Vercel project dashboard, go to Settings > Environment Variables and add
 
 ## Step 4: Database Setup
 
-### Option A: Supabase (Recommended - Free tier)
-1. Go to [supabase.com](https://supabase.com)
-2. Create a new project
-3. Go to Settings > Database
-4. Copy the connection string
-5. Use as your `DATABASE_URL`
+### Option A: Supabase (Configured)
+Your Supabase project is already set up:
+- Project URL: `https://vdhotrhbvlcntplhsagy.supabase.co`
+- API Key: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZkaG90cmhidmxjbnRwbGhzYWd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI4NTkxMjEsImV4cCI6MjA2ODQzNTEyMX0.x1uEbziEAQkvBFdtFCOvOJoUGOhUbK9uta7WVPRD0K4`
+
+To get your DATABASE_URL:
+1. Go to your Supabase dashboard
+2. Click Settings > Database
+3. Copy the **Transaction pooler** connection string
+4. Replace `[YOUR-PASSWORD]` with your database password
+5. Use this as your `DATABASE_URL`
+
+Example format:
+```
+postgresql://postgres.vdhotrhbvlcntplhsagy:[YOUR-PASSWORD]@aws-0-us-west-1.pooler.supabase.com:6543/postgres
+```
 
 ### Option B: Railway
 1. Go to [railway.app](https://railway.app)
