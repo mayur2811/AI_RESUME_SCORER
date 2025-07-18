@@ -3,15 +3,24 @@ import uuid
 from flask import render_template, request, redirect, url_for, flash, jsonify, session
 from werkzeug.utils import secure_filename
 from app import app, db
-from models import Resume, Job, Analysis
+from models import Resume, Job, Analysis, User
 from document_parser import DocumentParser
 from resume_analyzer import ResumeAnalyzer
+from gamification import GamificationService
 import logging
 
 logger = logging.getLogger(__name__)
 
-# Initialize analyzer
+# Initialize services
 analyzer = ResumeAnalyzer()
+gamification = GamificationService()
+
+def get_current_user():
+    """Get or create current user based on session"""
+    if 'user_session_id' not in session:
+        session['user_session_id'] = str(uuid.uuid4())
+    
+    return gamification.get_or_create_user(session['user_session_id'])
 
 # Sample job data for demonstration
 SAMPLE_JOBS = [
@@ -54,9 +63,25 @@ def populate_sample_jobs():
 
 @app.route('/')
 def index():
-    """Home page"""
+    """Home page with gamification data"""
     populate_sample_jobs()
-    return render_template('index.html')
+    user = get_current_user()
+    
+    # Update daily streak
+    gamification.update_streak(user)
+    
+    # Get user stats for dashboard
+    user_stats = gamification.get_user_stats(user)
+    
+    # Get recent achievements
+    recent_badges = []
+    if user.user_badges:
+        recent_badges = sorted(user.user_badges, key=lambda x: x.earned_date, reverse=True)[:3]
+    
+    return render_template('index.html', 
+                         user_stats=user_stats, 
+                         recent_badges=recent_badges,
+                         user=user)
 
 @app.route('/upload')
 def upload_page():
@@ -94,17 +119,25 @@ def upload_resume():
             os.remove(file_path)
             return redirect(request.url)
         
+        # Get current user for gamification
+        user = get_current_user()
+        
         # Save to database
         resume = Resume(
             filename=filename,
             original_filename=secure_filename(file.filename),
-            content=content
+            content=content,
+            user_id=user.id
         )
         db.session.add(resume)
         db.session.commit()
         
         # Store resume ID in session
         session['resume_id'] = resume.id
+        
+        # Award XP and check achievements
+        level_up_data = gamification.award_xp(user, gamification.XP_RESUME_UPLOAD, "Resume Upload")
+        achievements = gamification.check_achievements(user, {'action': 'resume_upload'})
         
         flash('Resume uploaded successfully!', 'success')
         return redirect(url_for('analyze_resume'))
@@ -143,6 +176,20 @@ def perform_analysis():
         else:
             analysis_result = analyzer.analyze_resume(resume.content)
         
+        # Get current user for gamification
+        user = get_current_user()
+        
+        # Award XP based on score improvement and first analysis
+        score = analysis_result.get('overall_score', 0)
+        xp_amount = gamification.XP_FIRST_ANALYSIS
+        if resume.current_score > 0:
+            improvement = score - resume.current_score
+            if improvement > 0:
+                xp_amount += gamification.XP_SCORE_IMPROVEMENT(improvement)
+        
+        # Update resume score
+        resume.current_score = score
+        
         # Save analysis to database
         analysis = Analysis(
             resume_id=resume.id,
@@ -151,12 +198,18 @@ def perform_analysis():
             experience_match_score=analysis_result.get('experience_match_score', analysis_result.get('structure_score', 0)),
             education_match_score=analysis_result.get('education_match_score', analysis_result.get('completeness_score', 0)),
             recommendations='\n'.join(analysis_result.get('recommendations', [])),
-            missing_skills='\n'.join(analysis_result.get('missing_skills', analysis_result.get('missing_sections', [])))
+            missing_skills='\n'.join(analysis_result.get('missing_skills', analysis_result.get('missing_sections', []))),
+            xp_awarded=xp_amount
         )
         db.session.add(analysis)
         db.session.commit()
         
-        return render_template('results.html', resume=resume, analysis=analysis, analysis_data=analysis_result)
+        # Award XP and check achievements
+        level_up_data = gamification.award_xp(user, xp_amount, "Resume Analysis")
+        achievements = gamification.check_achievements(user, {'action': 'analysis_complete', 'score': score})
+        
+        return render_template('results.html', resume=resume, analysis=analysis, analysis_data=analysis_result, 
+                             level_up_data=level_up_data, achievements=achievements)
         
     except Exception as e:
         logger.error(f"Error performing analysis: {str(e)}")

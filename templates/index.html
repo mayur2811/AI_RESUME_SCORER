@@ -4,6 +4,78 @@
 
 {% block content %}
 <div class="container">
+    <!-- Gamification Dashboard -->
+    {% if user_stats %}
+    <div class="row justify-content-center mb-4">
+        <div class="col-lg-10">
+            <div class="card bg-dark border mb-4 gamification-dashboard">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="level-avatar me-3">
+                                    <div class="level-circle">{{ user_stats.level }}</div>
+                                </div>
+                                <div>
+                                    <h4 class="mb-1 text-gradient">{{ user_stats.level_title }}</h4>
+                                    <p class="text-muted mb-0">Level {{ user_stats.level }} • {{ user_stats.total_xp }} XP</p>
+                                </div>
+                            </div>
+                            
+                            <!-- XP Progress Bar -->
+                            <div class="progress-container mb-3">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <small class="text-muted">Progress to Level {{ user_stats.level + 1 }}</small>
+                                    <small class="text-muted">{{ user_stats.xp_progress }}/{{ user_stats.xp_for_level }} XP</small>
+                                </div>
+                                <div class="progress magical-progress">
+                                    <div class="progress-bar bg-gradient-primary" role="progressbar" 
+                                         style="width: {{ user_stats.progress_percentage }}%" 
+                                         data-target="{{ user_stats.progress_percentage }}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="row text-center">
+                                <div class="col-6">
+                                    <div class="stat-item">
+                                        <i class="fas fa-fire text-warning mb-1"></i>
+                                        <div class="stat-number">{{ user_stats.current_streak }}</div>
+                                        <div class="stat-label">Day Streak</div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="stat-item">
+                                        <i class="fas fa-trophy text-warning mb-1"></i>
+                                        <div class="stat-number">{{ user_stats.badges_count }}</div>
+                                        <div class="stat-label">Badges</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Recent Badges -->
+                    {% if recent_badges %}
+                    <div class="recent-badges mt-3">
+                        <h6 class="text-muted mb-2">Recent Achievements</h6>
+                        <div class="d-flex gap-2">
+                            {% for user_badge in recent_badges %}
+                            <div class="badge-item" title="{{ user_badge.badge.description }}">
+                                <i class="{{ user_badge.badge.icon }} text-warning"></i>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
     <!-- Hero Section -->
     <div class="row justify-content-center text-center mb-5">
         <div class="col-lg-8">

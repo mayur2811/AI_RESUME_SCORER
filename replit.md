@@ -8,6 +8,17 @@ This is a Flask-based web application that provides AI-powered resume analysis a
 
 Preferred communication style: Simple, everyday language.
 
+## Recent Changes
+
+### July 18, 2025 - Comprehensive Gamification System
+- Added full gamification models (User, Badge, UserBadge, Challenge, UserChallenge, Achievement)
+- Implemented GamificationService with XP system, level progression, and achievement tracking
+- Added magical gamified dashboard on homepage showing user level, XP progress, streaks, and badges
+- Integrated XP rewards for resume uploads (25 XP) and analysis completion (50+ XP based on score)
+- Created badge system with automatic achievement detection for milestones
+- Enhanced UI with animated progress bars, level avatars, and celebration effects
+- Added session-based user tracking without requiring account creation
+
 ## System Architecture
 
 ### Frontend Architecture
