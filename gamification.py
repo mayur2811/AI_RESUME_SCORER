@@ -111,17 +111,18 @@ class GamificationService:
         if context_data:
             # Resume upload achievements
             if context_data.get('action') == 'resume_upload':
-                if user.resumes.count() == 1:
+                resume_count = len(user.resumes)
+                if resume_count == 1:
                     if self.award_badge(user, 'first_resume'):
                         achievements_awarded.append('first_resume')
-                elif user.resumes.count() == 5:
+                elif resume_count == 5:
                     if self.award_badge(user, 'resume_collector'):
                         achievements_awarded.append('resume_collector')
             
             # Analysis achievements
             elif context_data.get('action') == 'analysis_complete':
                 score = context_data.get('score', 0)
-                analyses_count = user.resumes[0].analyses.count() if user.resumes else 0
+                analyses_count = len(user.resumes[0].analyses) if user.resumes else 0
                 
                 if analyses_count == 1:
                     if self.award_badge(user, 'first_analysis'):
