@@ -287,5 +287,5 @@ def not_found(e):
 
 @app.errorhandler(500)
 def server_error(e):
-    flash('An internal error occurred. Please try again.', 'error')
-    return redirect(url_for('index'))
+    logger.error(f"Server Error: {e}", exc_info=True)
+    return render_template('500.html'), 500

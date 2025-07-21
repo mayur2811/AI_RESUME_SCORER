@@ -3,6 +3,7 @@ import logging
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy.engine.url import make_url
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 # Load environment variables from .env file if it exists (optional for local dev)
@@ -34,7 +35,22 @@ app.config['UPLOAD_FOLDER'] = 'uploads'
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 # Configure the database
-app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL", "sqlite:///resume_analyzer.db")
+db_url = os.environ.get("DATABASE_URL")
+if db_url:
+    try:
+        url_obj = make_url(db_url)
+        if url_obj.host and '@' in url_obj.host:
+            logging.warning("Malformed database URL detected. Attempting to fix.")
+            # The host part seems to contain the user, like user@host.
+            # We will split it and use the second part as the correct host.
+            _user_in_host, new_host = url_obj.host.split('@', 1)
+            url_obj = url_obj._replace(host=new_host)
+            db_url = str(url_obj)
+            logging.info("Using corrected database URL.")
+    except Exception as e:
+        logging.error(f"Failed to parse or correct database URL: {e}")
+
+app.config["SQLALCHEMY_DATABASE_URI"] = db_url 
 app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
     "pool_recycle": 300,
     "pool_pre_ping": True,
