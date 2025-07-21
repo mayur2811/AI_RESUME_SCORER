@@ -80,24 +80,26 @@ git push origin main
    - Output Directory: Leave empty
    - Install Command: Leave empty
 
-### 3.4 Add Environment Variables
-Click "Environment Variables" and add these:
+### 3.4 Add Environment Variables ⚠️ CRITICAL
+Click "Environment Variables" and add these EXACT values:
 
 **Required Variables:**
-1. **DATABASE_URL**
+1. **DATABASE_URL** 
    - Name: `DATABASE_URL`
-   - Value: Your Supabase connection string
-   - Format: `postgresql://postgres:[password]@db.[project].supabase.co:5432/postgres`
+   - Value: `postgresql://postgres:YOUR_PASSWORD_HERE@db.vdhotrhbvlcntplhsagy.supabase.co:5432/postgres`
+   - ⚠️ Replace `YOUR_PASSWORD_HERE` with your actual Supabase password
 
 2. **SESSION_SECRET**
-   - Name: `SESSION_SECRET`
-   - Value: Any random string (e.g., `my-super-secret-key-12345`)
+   - Name: `SESSION_SECRET`  
+   - Value: `resume-analyzer-secret-2024-production`
 
-**Optional (for full AI features):**
+**Optional:**
 3. **OPENAI_API_KEY**
    - Name: `OPENAI_API_KEY`
    - Value: Your OpenAI API key (starts with `sk-`)
-   - Note: App works without this using intelligent fallback
+   - Note: App works without this - uses intelligent fallback analysis
+
+**⚠️ IMPORTANT:** Without correct DATABASE_URL, the app will crash with 500 error!
 
 ### 3.5 Deploy
 1. Click "Deploy"
@@ -135,24 +137,45 @@ Click "Environment Variables" and add these:
 2. Add your custom domain (if you have one)
 3. Follow DNS configuration instructions
 
-## Troubleshooting
+## Troubleshooting 500 INTERNAL_SERVER_ERROR
 
-### Common Issues:
-1. **Build Fails**: Check requirements.txt includes all dependencies
-2. **Database Connection Error**: Verify DATABASE_URL format and password
-3. **App Crashes**: Check Vercel Function logs in dashboard
-4. **Static Files Not Loading**: Ensure static/ folder is uploaded
+### Most Common Issue: Database Connection
+**Problem:** `500: FUNCTION_INVOCATION_FAILED`  
+**Solution:** Fix DATABASE_URL environment variable
 
-### View Logs:
-1. Go to Vercel dashboard
-2. Click your project
-3. Go to "Functions" tab to see serverless function logs
-4. Check for error messages
+1. **Check DATABASE_URL Format:**
+   ```
+   ✅ Correct: postgresql://postgres:YourPassword@db.vdhotrhbvlcntplhsagy.supabase.co:5432/postgres
+   ❌ Wrong: Missing password or wrong format
+   ```
 
-### Update Code:
-1. Make changes to files on GitHub
-2. Vercel automatically redeploys on every commit
-3. No manual redeployment needed
+2. **Get Correct Database URL:**
+   - Go to [Supabase Dashboard](https://supabase.com/dashboard/project/vdhotrhbvlcntplhsagy)
+   - Click "Connect" → "Transaction pooler"
+   - Copy connection string and replace [YOUR-PASSWORD]
+
+3. **Update in Vercel:**
+   - Vercel Dashboard → Your Project → Settings → Environment Variables
+   - Edit DATABASE_URL with correct value
+   - Redeploy the project
+
+### View Error Logs:
+1. Vercel Dashboard → Your Project → Functions tab
+2. Look for detailed error messages
+3. Common errors:
+   - Database connection timeout
+   - Missing environment variables
+   - Import errors
+
+### Fix Steps:
+1. ✅ Verify DATABASE_URL is correct
+2. ✅ Ensure SESSION_SECRET is set
+3. ✅ Check all files uploaded to GitHub
+4. ✅ Redeploy after fixing environment variables
+
+### Test Database Connection:
+Use this URL format exactly:
+`postgresql://postgres:YOUR_ACTUAL_PASSWORD@db.vdhotrhbvlcntplhsagy.supabase.co:5432/postgres`
 
 ## Your Deployment URLs
 

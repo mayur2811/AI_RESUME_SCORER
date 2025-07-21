@@ -5,12 +5,13 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
 from werkzeug.middleware.proxy_fix import ProxyFix
 
-# Load environment variables from .env file if it exists
+# Load environment variables from .env file if it exists (optional for local dev)
+# Vercel automatically provides environment variables
 try:
     from dotenv import load_dotenv
     load_dotenv()
 except ImportError:
-    pass  # dotenv not installed, use system environment variables
+    pass  # dotenv not available in serverless environment
 
 # Set up logging for debugging
 logging.basicConfig(level=logging.DEBUG)
@@ -43,9 +44,14 @@ app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
 db.init_app(app)
 
 with app.app_context():
-    # Import models to ensure tables are created
-    import models  # noqa: F401
-    db.create_all()
+    try:
+        # Import models to ensure tables are created
+        import models  # noqa: F401
+        db.create_all()
+    except Exception as e:
+        # Log database initialization error but don't crash the app
+        logging.error(f"Database initialization error: {str(e)}")
+        # In production, this might be okay if database exists
 
 # Import routes after app initialization
 from routes import *  # noqa: F401, E402
